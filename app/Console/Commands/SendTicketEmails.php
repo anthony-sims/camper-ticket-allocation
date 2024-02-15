@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Ticket;
 use Illuminate\Console\Command;
 
 class SendTicketEmails extends Command
@@ -25,6 +26,11 @@ class SendTicketEmails extends Command
      */
     public function handle()
     {
-        //
+        $tickets = Ticket::where('issued', true)->get();
+        $tickets->each(function ($ticket) {
+            // Send the email
+            $ticket->issued = true;
+            $ticket->save();
+        });
     }
 }
