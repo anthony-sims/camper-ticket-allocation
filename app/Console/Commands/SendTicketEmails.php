@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\TicketCode;
 use App\Models\Ticket;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class SendTicketEmails extends Command
 {
@@ -26,10 +28,12 @@ class SendTicketEmails extends Command
      */
     public function handle()
     {
-        $tickets = Ticket::where('issued', true)->get();
+        $tickets = Ticket::where('issued', true)->where('emailed', false)->get();
         $tickets->each(function ($ticket) {
             // Send the email
-            $ticket->issued = true;
+            $this->info("Sending ticket to {$ticket->camper->email}");
+            Mail::to($ticket->camper->email)->send(new TicketCode($ticket));
+            $ticket->emailed = true;
             $ticket->save();
         });
     }
