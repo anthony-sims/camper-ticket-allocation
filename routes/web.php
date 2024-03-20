@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\PreBlaze;
 use App\Mail\TicketDateUpdate;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,5 @@ Route::get('/', function () {
 });
 
 Route::get('/mailable', function () {
-    return new TicketDateUpdate();
+    return new PreBlaze();
 });
