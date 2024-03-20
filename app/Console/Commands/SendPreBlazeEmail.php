@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Mail\PreBlaze;
 use App\Models\Camper;
 use Illuminate\Console\Command;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 
 class SendPreBlazeEmail extends Command
@@ -29,12 +29,13 @@ class SendPreBlazeEmail extends Command
      */
     public function handle()
     {
-        $campers = Camper::whereHas('ticket', function (QueryBuilder $query) {
+        $campers = Camper::whereHas('ticket', function (Builder $query) {
             $query->where('issued', true);
         })->get();
 
         foreach ($campers as $c) {
             Mail::to($c->email)->send(new PreBlaze());
+            $this->info("Sent to {$c->email}");
         }
     }
 }
